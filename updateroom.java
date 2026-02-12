@@ -1,0 +1,162 @@
+
+package hotel.management.system;
+import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
+import java.sql.*;
+import java.awt.event.*;
+
+public class updateroom extends JFrame implements ActionListener
+{
+       Choice customer;
+       JTextField tfroom,tfavailable,tfstatus;
+       JButton check,update,back;
+  updateroom()
+  {
+        getContentPane().setBackground(Color.WHITE);
+        setLayout(null);
+        
+        JLabel text = new JLabel("Update Room Status");
+        text.setFont(new Font("Tahoma", Font.PLAIN, 25));
+        text.setBounds(40,30,250,30);
+        text.setForeground(Color.BLUE);
+        add(text);
+        
+        JLabel lblid = new JLabel("Customer ID");
+        lblid.setBounds(30,80,100,20);
+      
+         add(lblid);
+        
+         customer = new Choice();
+         customer.setBounds(200,80,150,25);
+         add(customer);
+        
+        try
+        {
+         Conn c = new Conn();
+         ResultSet rs = c.s.executeQuery("select * from customer");
+         while(rs.next())
+         {
+         customer.add(rs.getString("number"));
+         }
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+        JLabel lblroom = new JLabel("Room number");
+        lblroom.setBounds(30,130,100,20);
+        add(lblroom);
+        
+        tfroom = new JTextField();
+        tfroom.setBounds(200,130,150,25);
+        add(tfroom);
+        
+        JLabel lblname = new JLabel("Availabiliity");
+        lblname.setBounds(30,170,100,20);
+        add(lblname);
+        
+        tfavailable = new JTextField();
+        tfavailable.setBounds(200,170,150,25);
+        add(tfavailable);
+        
+        JLabel lbltime = new JLabel("cleaning_status");
+        lbltime.setBounds(30,220,100,20);
+        add(lbltime);
+        
+        tfstatus = new JTextField();
+        tfstatus.setBounds(200,220,150,25);
+        add(tfstatus);
+        
+        check =new JButton("Check");
+        check.setBackground(Color.BLACK);
+        check.setForeground(Color.WHITE);
+        check.setBounds(30,325,100,30);
+        check.addActionListener(this);
+        add(check);
+        
+        update =new JButton("Update");
+        update.setBackground(Color.BLACK);
+        update.setForeground(Color.WHITE);
+        update.setBounds(150,325,100,30);
+        update.addActionListener(this);
+        add(update);
+        
+        back=new JButton("back");
+        back.setBackground(Color.BLACK);
+        back.setForeground(Color.WHITE);
+        back.setBounds(270,325,100,30);
+        back.addActionListener(this);
+        add(back);
+        
+        ImageIcon i1=new ImageIcon(ClassLoader.getSystemResource("icons/singlebed.jpeg"));
+        Image i2 = i1.getImage().getScaledInstance(500, 300, Image.SCALE_DEFAULT);
+        ImageIcon i3 = new ImageIcon(i2);
+        JLabel image=new JLabel(i3);
+        image.setBounds(400,50,500,300);
+        add(image);
+        
+        setBounds(300,200,980,450);
+        getContentPane().setBackground(Color.pink);
+        setVisible(true);
+       }
+    @Override
+    public void actionPerformed (ActionEvent ae)
+    {
+        if(ae.getSource()==check)
+        {
+          String id = customer.getSelectedItem();
+          String query = "select * from customer where number ='"+id+"'";
+        try 
+        {
+         Conn c= new Conn();           
+         ResultSet rs = c.s.executeQuery(query);
+        while(rs.next())
+           {
+          tfroom.setText(rs.getString("room"));
+           }
+        ResultSet rs2=c.s.executeQuery("select * from room where roomno ='"+tfroom.getText()+"'");
+        while(rs2.next()) 
+        {
+        tfavailable.setText(rs2.getString("availability"));
+        tfstatus.setText(rs2.getString("cleaning_status"));
+        }
+         }
+        catch (Exception e)
+        {
+        e.printStackTrace();
+        } 
+         }
+        else if(ae.getSource()==update)
+        {
+        customer.getSelectedItem();
+        String room = tfroom.getText();
+        String available = tfavailable.getText();
+        String status = tfstatus.getText();
+        try
+        {
+        Conn c = new Conn();
+        c.s.executeUpdate("update room set availability = '"+available+"', cleaning_status= '"+status+"' where roomno = '"+room+"'");
+        JOptionPane.showMessageDialog(null, "Data Updated Successfully");
+        setVisible(false);
+        new Reception();
+        }
+        catch (Exception e) 
+        {
+        e.printStackTrace();
+        }
+         }else
+        {
+         setVisible(false);
+         new Reception();
+        }
+    }
+    public static void main(String[] args)
+    {
+        new updateroom();
+    }
+}
+
+
+    
+
